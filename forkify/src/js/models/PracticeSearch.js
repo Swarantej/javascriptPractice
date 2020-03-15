@@ -1,0 +1,1 @@
+export default '04Feb1993';

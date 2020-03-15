@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Asynchronous Basics</title>
+    </head>
+
+    <body>
+        <h1>Asynchronous Basics with Call Back Function</h1>
+        <script>
+
+     /*
+            //Synchronous Functions
+            const second = ()=>{
+                console.log(`This is second method from Syncrhonous function`);
+            };
+            const first = ()=>{
+                console.log(`This is first method from Syncrhonous function`);
+                second(); //Calling second method
+            }
+
+            //Calling first methods/function
+
+            first();
+
+            //ASynchronous Functions
+            const secondAsync = ()=>{
+                //using setTimeOut function
+                setTimeout(()=>{
+                    console.log(`From Settime out method is asynch method`)
+                },1500);
+                console.log(`This is second method from ASyncrhonous function`);
+            };
+            const firstAsync = ()=>{
+                console.log(`This is first method from ASyncrhonous function`);
+                secondAsync(); //Calling second method
+            }
+
+            //Calling first methods/function
+
+            firstAsync();
+    */
+
+
+
+/*
+    // ASYNCHRONOUS FUNCTION WITH CALLBACK, WHICH TRIGGERS THE 'CALLBACK HELL'
+    //This we can overcome by "Promises concept"
+
+            function getReciepe(){
+                setTimeout(()=>{
+                    const reciepeID = [1,2,3,4];
+                    console.log(reciepeID);
+                    //2nd Async func
+                    setTimeout(id=>{
+                        const reciepe = {title:'Masal Dosa',chef:'Swaran'};
+                        console.log(`${id}:${reciepe.title}`);
+                        //3rd Asycn func
+                        setTimeout(chef=>{
+                           const reciepe2 = {title:'IDLY',chef:'Swaran'};
+                        console.log(reciepe);
+                        console.log(reciepe2);
+
+                        },2000,reciepe.chef);
+
+                    },1500,reciepeID[2]);
+                },1500)
+            }
+            getReciepe();
+
+        */
+
+            //######################   PROMISES    ###############
+
+            const getIDS = new Promise((resolve,reject)=>{
+                setTimeout(()=>{
+                    resolve([1,2,3]);
+                },1500)
+            });
+
+            const getReciepe = reciepeID =>{
+                return new Promise((resolve,reject)=>{
+                    setTimeout(ID=>{
+                      const reciepe = {title: 'Dosa', chef:'Swaran'};
+                      resolve(`${ID}: ${reciepe.title}`);
+
+                    },1500,reciepeID);
+
+                });
+            };
+
+            const getChef = chef =>{
+                return new Promise((resolve,reject)=>{
+                    setTimeout(cook=>{
+                      const reciepe = {title: 'IDLY', chef:'Swarantej'};
+                      resolve(`${cook}: ${reciepe.title}`);
+
+                    },1500,chef);
+
+                });
+            };
+
+/*
+            //Here we will return the values and then apply Then Condition
+            //Consuming Promises using ES 6
+            getIDS
+            .then(IDs=>{
+                console.log(IDs);
+                return getReciepe(IDs[2]);
+            })
+            .then(reciepe=>{
+                console.log(reciepe);
+                return getChef('Swarantej');
+            })
+            .then(reciepe =>{
+                console.log(reciepe);
+            })
+            .then(error =>{
+                console.log('Error!!')
+            });
+
+*/
+
+
+/*
+            //Consuming promises using ES 8 ASUNC/AWAIT
+
+
+            async function getReciepeAW(){
+                const IDs = await getIDS;
+                console.log('Async '+IDs);
+
+                const reciepe = await getReciepe(IDs[2]);
+                console.log('Async '+reciepe);
+
+                const chef = await getChef('Swarantej');
+                console.log('Async '+chef);
+
+                return reciepe;
+            }
+
+            getReciepeAW();
+
+            //Inorder to call the returned value we use .then() bcoz asyn func returns the promises
+
+            getReciepeAW().then(result => console.log(`${result} is the best`));
+
+*/
+
+
+            // AJAX API Calls to using FETCH METHOD 
+
+        /*
+            function getWeather(place){
+                //fetch method returns promise so we use the .then() to get the result
+                // The result needs to be converted fron JSON to JAVASCRIPT obj usinh json()
+                //fetch(`https://crossorigin.me/https://www.metaweather.com/api/location/${place}/`)
+
+                fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${place}/`)
+                .then( result => {
+                    console.log(result);
+                    return result.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    const today = data.consolidated_weather[0];
+                    console.log(`Temperature in the ${data.title} is betweeen ${today.min_temp} and ${today.max_temp}`);
+                }).catch( error => console.log('Error Occurred!'));
+            }
+            getWeather(2487956);
+            getWeather(44418);
+        */
+            // Using ASYNC AWAIT
+
+            async function getWeatherAW(place){
+
+                try{
+                    const result = await fetch(`https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${place}/`);
+                    const data = await result.json();
+                    console.log(data);
+                    const tomorrow = data.consolidated_weather[1];
+                    console.log(`Temperature in the ${data.title} is betweeen ${tomorrow.min_temp} and ${tomorrow.max_temp}`);
+                    return data;
+                }catch(error){
+                    alert(error);
+                }
+                
+            }
+            getWeatherAW(2487956);
+            let dataLondon;
+            getWeatherAW(44418).then(data => {
+                dataLondon = data
+                console.log(dataLondon);
+                });
+
+        </script>
+    </body>
+</html>
